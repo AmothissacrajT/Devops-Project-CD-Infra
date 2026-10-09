@@ -1,0 +1,3 @@
+-- Database initialization can be added here later.
+-- PostgreSQL creates the database automatically
+-- using POSTGRES_DB from docker-compose.yml.

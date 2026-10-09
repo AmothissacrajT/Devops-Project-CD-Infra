@@ -1,0 +1,110 @@
+services:
+
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+
+    image: ghcr.io/amothissacrajt/textile-barcode-database:latest
+
+    container_name: textile-database
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER} -d ${DB_NAME}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - textile-network
+
+
+  # ==========================================
+  # Django Backend
+  # ==========================================
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    image: ghcr.io/amothissacrajt/textile-barcode-backend:latest
+
+    container_name: textile-backend
+
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # IMPORTANT:
+      # "database" is the Compose service name
+      DB_HOST: database
+      DB_PORT: 5432
+
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    networks:
+      - textile-network
+
+
+  # ==========================================
+  # React Frontend + Apache
+  # ==========================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    image: ghcr.io/amothissacrajt/textile-barcode-frontend:latest
+    
+    container_name: textile-frontend
+
+    depends_on:
+      - backend
+
+    ports:
+      - "8085:80"
+
+    networks:
+      - textile-network
+
+
+# ==========================================
+# Persistent PostgreSQL storage
+# ==========================================
+
+volumes:
+  postgres_data:
+
+
+# ==========================================
+# Internal application network
+# ==========================================
+
+networks:
+  textile-network:
+    driver: bridge
