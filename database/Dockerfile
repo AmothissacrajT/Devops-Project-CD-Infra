@@ -1,4 +1,4 @@
 FROM postgres:17-alpine
 
-# PostgreSQL will use these values supplied by Docker Compose.
-# The database data itself will be stored in a Docker volume.
+#Could have directly used the postgres image in EC2 instead of pulling from ghcr.io 
+#But wanted to show this as an individual micro-services

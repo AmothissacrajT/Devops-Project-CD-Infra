@@ -14,7 +14,7 @@ RUN apt-get update \
 
 COPY requirements.txt .
 
-# Convert UTF-16 requirements.txt to UTF-8
+# Convertion of UTF-16 requirements.txt to UTF-8 compatibility
 RUN iconv -f UTF-16 -t UTF-8 requirements.txt > /tmp/requirements.txt \
     && pip install --no-cache-dir -r /tmp/requirements.txt
 
