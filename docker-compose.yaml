@@ -1,9 +1,5 @@
 services:
 
-  # ==========================================
-  # PostgreSQL Database
-  # ==========================================
-
   database:
     build:
       context: ./database
@@ -34,11 +30,6 @@ services:
     networks:
       - textile-network
 
-
-  # ==========================================
-  # Django Backend
-  # ==========================================
-
   backend:
     build:
       context: ./backend
@@ -54,10 +45,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-
-      # IMPORTANT:
-      # "database" is the Compose service name
-      DB_HOST: database
+      DB_HOST: database #This database point to the Database service In compose file "database" 
       DB_PORT: 5432
 
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
@@ -68,11 +56,6 @@ services:
 
     networks:
       - textile-network
-
-
-  # ==========================================
-  # React Frontend + Apache
-  # ==========================================
 
   frontend:
     build:
@@ -92,18 +75,8 @@ services:
     networks:
       - textile-network
 
-
-# ==========================================
-# Persistent PostgreSQL storage
-# ==========================================
-
 volumes:
   postgres_data:
-
-
-# ==========================================
-# Internal application network
-# ==========================================
 
 networks:
   textile-network:
