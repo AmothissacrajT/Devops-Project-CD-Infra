@@ -1,4 +1,4 @@
-#Build react
+# Build react
 
 FROM node:22-alpine AS builder
 
@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 
-#Apache
+#Apache Server
 
 FROM httpd:2.4-alpine
 
